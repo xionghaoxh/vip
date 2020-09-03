@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页</title>
+    <link href="/css/common.css"
+          rel="stylesheet">
+    <style>
+        h1.page-title{
+           font-size: 120%;
+           font-weight: bold;
+            padding: 1em 1em 0 1em;
+            border-bottom: 1px solid gray;
+        }
+    </style>
+</head>
+<body>
+<article>
+<nav>
+    <ul class="breadcrumb">
+        <li>帐号信息</li>
+    </ul>
+</nav>
+<section>
+    <form class="label12em" @submit.prevent="modifyName">
+        <p>
+            <label for="accountEL">账号：</label>
+            <input disabled
+                   id="accountEL"
+                   placeholder=""
+                   type="text"
+                   :value="params.account">
+            <em>系统登录帐号，不可修改</em>
+        </p>
+        <p>
+            <label for="nameEL">*名称：</label>
+            <input id="nameEL"
+                   name="name"
+                   placeholder=""
+                   type="text"
+                   v-model="params.name">
+
+            <button style="margin-left: 1em" >修改名称</button>
+        </p>
+
+        <div>
+            <p>
+                <label for="lastLoginTimeEL">*上次登录时间：</label>
+                <input :value="params.timeLastLogin"
+                       disabled
+                       id="lastLoginTimeEL"
+                       name="lastLoginTime"
+                       placeholder=""
+                       type="text"
+                       >
+            </p>
+            <p>
+                <label for="lastModifyPasswordTimeEL">*最后密码修改时间：</label>
+                <input :value="params.timeLastAlterPassword"
+                       disabled
+                       id="lastModifyPasswordTimeEL"
+                       name="lastModifyPasswordTime"
+                       placeholder=""
+                       type="text"
+                      >
+            </p>
+
+
+        </div>
+
+        <div>
+            <p>
+                <label for="lastLoginAgentEL">*上次登录设备：</label>
+                <input :value="params.lastLoginAgent"
+                       disabled
+                       id="lastLoginAgentEL"
+                       name="lastLoginAgent"
+                       placeholder=""
+                       type="text"
+                       >
+            </p>
+            <p>
+                <label for="lastLoginIpEL">*上次登录IP：</label>
+                <input :value="params.lastLoginIp"
+                       disabled
+                       id="lastLoginIpEL"
+                       name="lastLoginIp"
+                       placeholder=""
+                       type="text"
+                      >
+            </p>
+        </div>
+        <p>
+            <label for="createTimeEL">*创建时间：</label>
+            <input :value="params.timeCreate"
+                   disabled
+                   id="createTimeEL"
+                   name="createTime"
+                   placeholder=""
+                   type="text"
+                   >
+        </p>
+    </form>
+</section>
+</article>
+<script src="/js/jquery.js"></script>
+<script src="/js/yi.toast.js"></script>
+<script src="/js/axios.min.js"></script>
+<script src="/js/Moment.js"></script>
+<script src="/js/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"body>article",
+        data:{
+            params:JSON.parse(sessionStorage.getItem("currentUser"))
+        },
+        methods:{
+            modifyName:function () {
+                let paramsName= new URLSearchParams();
+                paramsName.append("id",app.params.id);
+                paramsName.append("name",app.params.name);
+                axios.post('/api/account/name',paramsName)
+                    .then(function (resp) {
+                        if(resp.code=="ok"){
+                            toast(resp.message);
+                            return;
+                        }
+                        sessionStorage.setItem("currentUser",JSON.stringify(app.params));
+                        toast("修改名称成功")
+                    })
+            }
+
+        },
+        created:function () {
+            console.log(JSON.parse(sessionStorage.getItem("currentUser")));
+            if(this.params.timeLastAlterPassword!=null){
+                this.params.timeLastAlterPassword=moment(this.params.timeLastAlterPassword).format("YYYY年MM月D日");
+            }
+            if(this.params.timeLastLogin!=null){
+                this.params.timeLastLogin=moment(this.params.timeLastLogin).format("YYYY年MM月D日");
+            }
+            this.params.timeCreate=moment(this.params.timeCreate).format("YYYY年MM月D日 hh:mm:ss");
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vip.dao.LogDao">
+
+    <resultMap type="LogEntity" id="LogMap">
+        <result property="id" column="id" />
+        <result property="loginTime" column="login_time" />
+        <result property="loginAccount" column="login_account" />
+        <result property="loginIp" column="login_ip" />
+        <result property="avator" column="avator" />
+        <result property="loginAccountName" column="login_account_name" />
+        <result property="loginDevice" column="login_device" />
+        <result property="logoffTime" column="logoff_time" />
+        <result property="onlineTime" column="online_time" />
+    </resultMap>
+
+    <insert id="insert" >
+        insert into log_login(id, login_time, login_account, login_ip, avator, login_account_name, login_device, logoff_time, online_time)
+        values (#{id}, #{loginTime}, #{loginAccount}, #{loginIp}, #{avator}, #{loginAccountName}, #{loginDevice}, #{logoffTime}, #{onlineTime})
+    </insert>
+
+   <select id="selectLog" resultType="LogEntity">
+       select * from log_login
+       where login_time >#{a}
+   </select>
+
+    <!--其他查询-->
+    
+
+
+
+</mapper>
